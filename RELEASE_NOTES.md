@@ -1,16 +1,15 @@
-# Synced Trash 0.4.0
+# Synced Trash 0.4.1
 
 Shared, recoverable trash for Obsidian on Windows and iPhone.
 
 ## Changes
 
-- The **Empty trash** action permanently removes every item inside the visible `Trash/` folder, including leftover technical folders.
-- Entries whose content has not arrived on this device now offer **Remove pending entry** after a clear warning. This removes local recovery metadata only; it does not claim that another device's unsynced payload was deleted.
-- Retains recovery paths, deletion timestamps, and optional retention after 30/60/90 days.
-- Works alongside Synced Vault. Updated author metadata and added MIT license.
+- Committed a JavaScript lockfile so automated build verification can reproduce dependency resolution.
+- Added a GitHub Actions workflow that checks the tag, runs tests, attests the three installable files, and publishes release notes.
+- No changes to the deletion, restoration, or retention behavior from 0.4.0.
 
 ## GitHub release instructions
 
-Create a **published** GitHub Release with tag **`0.4.0`** (NOT `v0.4.0`). Upload **`main.js`**, **`manifest.json`**, and **`styles.css`** as three separate release assets, without renaming them. The repository's root `manifest.json` must also contain `"version": "0.4.0"`.
+Commit this source and push tag **`0.4.1`** (NOT `v0.4.1`). GitHub Actions will run tests, create provenance attestations, and publish a Release containing **`main.js`**, **`manifest.json`**, and **`styles.css`** with these notes as its description. Do not manually create the Release first.
 
 Backup your vault and test first. Deleted files cannot be recovered after permanent removal.

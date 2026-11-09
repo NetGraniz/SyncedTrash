@@ -2,7 +2,7 @@
 
 **A shared, recoverable trash for your Obsidian vault.** Made for desktop and mobile, including Windows and iPhone. Works with existing file-based sync services such as Remotely Save + Dropbox — no Dropbox integration or token is needed.
 
-**Version:** 0.4.0 (testing release). **Please back up your vault and verify the behavior on two test notes before relying on this plugin.**
+**Version:** 0.4.1 (testing release). **Please back up your vault and verify the behavior on two test notes before relying on this plugin.**
 
 ## How it works
 
@@ -97,7 +97,11 @@ Files or folders containing names starting with `.` or `_` are conservatively **
 
 The entry point is [`main.js`](main.js), with no runtime dependencies besides Obsidian. This deliberately keeps the project small and usable without an SDK.
 
-Run `npm test` to execute the Node.js unit tests. They mock the Obsidian filesystem; passing them does **not** guarantee compatibility with the real Windows and iOS applications. Validate the manual checklist above in both apps.
+Run `npm ci` and `npm test` to execute the Node.js unit tests. The committed `package-lock.json` makes dependency resolution reproducible. The tests mock the Obsidian filesystem; passing them does **not** guarantee compatibility with the real Windows and iOS applications. Validate the manual checklist above in both apps.
+
+## Publishing a release
+
+The GitHub Actions workflow at `.github/workflows/release.yml` checks that the pushed tag matches `manifest.json`, runs the tests, attests the release files, and creates a GitHub Release with its description populated from `RELEASE_NOTES.md`. After committing the source, push the **exact** version tag `0.4.1` (without a `v` prefix). **Do not create that release manually first**; let GitHub Actions create it with the three installable assets. The repository must allow GitHub Actions and write permissions for its workflow token. Check the Actions run before requesting a new community review.
 
 ## Privacy
 
