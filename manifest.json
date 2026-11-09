@@ -1,0 +1,9 @@
+{
+  "id": "synced-trash",
+  "name": "Synced Trash",
+  "version": "0.3.0",
+  "minAppVersion": "1.6.6",
+  "description": "A recoverable trash folder that syncs with your existing vault sync service.",
+  "author": "Synced Trash contributors",
+  "isDesktopOnly": false
+}
