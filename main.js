@@ -175,13 +175,14 @@ class SyncedTrashView extends ItemView {
           await this.refresh();
         }
       });
-      const remove = actions.createEl('button', { text: 'Delete permanently' });
-      remove.disabled = !entry.available;
+      const remove = actions.createEl('button', { text: entry.available ? 'Delete permanently' : 'Remove pending entry' });
       remove.addEventListener('click', () => new ConfirmDialog(
         this.app,
-        'Permanently delete this item?',
-        'This cannot be undone. Make sure your other devices have synced.',
-        'Delete permanently',
+        entry.available ? 'Permanently delete this item?' : 'Remove pending entry metadata?',
+        entry.available
+          ? 'This cannot be undone. Make sure your other devices have synced.'
+          : 'The deleted file has not reached this device. Only the local recovery metadata can be removed. Other devices may still contain its contents, and an orphaned file might arrive on a later sync. Back up and synchronize your devices first.',
+        entry.available ? 'Delete permanently' : 'Remove metadata only',
         async () => {
           await this.plugin.purgeEntry(entry);
           await this.refresh();
@@ -288,7 +289,7 @@ class SyncedTrashSettings extends PluginSettingTab {
       });
 
     container.createEl('p', {
-      text: 'Install and enable this plugin on both Windows and iPhone. Remotely Save should sync the ordinary Trash folder; it does not sync .trash.',
+      text: 'Install and enable this plugin on both Windows and iPhone. Synced Vault or your sync provider should synchronize the ordinary Trash folder, not .trash.',
       cls: 'synced-trash-hint',
     });
   }
@@ -682,7 +683,11 @@ class SyncedTrashPlugin extends Plugin {
       const item = this.app.vault.getAbstractFileByPath(entry.storedPath);
       const adapter = this.app.vault.adapter;
       if (!item && !(await adapter.exists(entry.storedPath))) {
-        throw new Error('File not yet synced; refusing to erase its recovery information.');
+        // Explicit user choice. Do not invent a file deletion for a payload
+        // that has not been downloaded: remove only local recovery metadata.
+        await this.removeEntryMetadata(entry);
+        this.refreshOpenViews();
+        return;
       }
       if (item) {
         await this.app.vault.delete(item, true); // Intentionally bypass trash hooks.

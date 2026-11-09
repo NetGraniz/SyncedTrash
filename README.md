@@ -2,11 +2,11 @@
 
 **A shared, recoverable trash for your Obsidian vault.** Made for desktop and mobile, including Windows and iPhone. Works with existing file-based sync services such as Remotely Save + Dropbox — no Dropbox integration or token is needed.
 
-**Version:** 0.3.0 (testing preview). **Please back up your vault and verify the behavior on two test notes before relying on this plugin.** The plugin has not yet been tested inside Obsidian on Windows or iOS.
+**Version:** 0.4.0 (testing release). **Please back up your vault and verify the behavior on two test notes before relying on this plugin.**
 
 ## How it works
 
-Remotely Save does not sync Obsidian's hidden `.trash` directory. Synced Trash instead moves deleted notes, attachments, and folders into an **ordinary** vault folder named `Trash`. Remotely Save should sync this folder like other vault content, as long as it isn't excluded in its settings.
+Obsidian's hidden `.trash` directory may not be synchronized. Synced Trash instead moves deleted notes, attachments, and folders into an **ordinary** vault folder named `Trash`. Synced Vault or another sync service can synchronize this folder like other vault content, as long as it isn't excluded.
 
 Example of the files in your vault:
 
@@ -30,6 +30,7 @@ The plugin moves items using `Vault.rename()`, rather than `FileManager.renameFi
 - One-click **Restore**, preserving the original path when possible.
 - Non-destructive conflict handling: if the original path is already occupied, restores to `name (restored).md` instead of overwriting.
 - Confirmation before permanent deletion. **Empty trash** permanently removes everything physically inside `Trash/`, including old technical folders, unknown files, and notes the plugin cannot index.
+- Entries whose payload has not reached this device can have their recovery metadata removed with an explicit warning; the remote payload may still remain until other devices sync.
 - Automatic removal of empty entry directories after individual permanent deletion.
 - Optional automatic deletion after **30, 60 or 90 days**, disabled by default.
 - One-time **Import from .trash…** action in Settings. Shows a warning and confirmation before moving existing local Obsidian trash items into the synced folder.

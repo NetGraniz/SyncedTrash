@@ -1,6 +1,6 @@
 {
   "name": "obsidian-synced-trash",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "A sync-friendly trash plugin for Obsidian on desktop and mobile",
   "scripts": {

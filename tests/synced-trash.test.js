@@ -232,14 +232,15 @@ test('auto cleanup respects disabled/30-day retention and skips pending entries'
   assert.equal(remaining[0].originalPath, 'Recent.md');
 });
 
-test('an entry awaiting remote download cannot be permanently deleted', async () => {
+test('an entry awaiting remote download can have its recovery metadata removed explicitly', async () => {
   const { fs, plugin } = setup();
   const file = fs.addFile('Example.md');
   await plugin.trashItem(file);
   const [entry] = await plugin.listEntries();
   fs.files.delete(entry.storedPath); // Simulate metadata syncing before payload.
-  await assert.rejects(() => plugin.purgeEntry(entry), /not yet synced/);
-  assert.equal(await fs.adapter.exists(entry.metadataPath), true);
+  await plugin.purgeEntry(entry);
+  assert.equal(await fs.adapter.exists(entry.metadataPath), false);
+  assert.equal((await plugin.listEntries()).length, 0);
 });
 
 test('trash hook leaves existing trash content to native handling', async () => {
