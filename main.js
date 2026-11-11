@@ -1,4 +1,4 @@
-/* Synced Trash — plain JavaScript, no build step or desktop-only APIs. */
+/* Synced Trash 0.4.2 — plain JavaScript with no desktop-only APIs. */
 const {
   ItemView,
   Modal,
@@ -424,7 +424,12 @@ class SyncedTrashPlugin extends Plugin {
     for (const part of parts) {
       cursor = cursor ? cursor + '/' + part : part;
       if (!(await this.app.vault.adapter.exists(cursor))) {
-        await this.app.vault.createFolder(cursor);
+        try { await this.app.vault.createFolder(cursor); }
+        catch (error) {
+          // A sync provider or another operation may have created it between
+          // exists() and createFolder(). Only ignore that specific race.
+          if (!(await this.app.vault.adapter.exists(cursor))) throw error;
+        }
       }
     }
   }
@@ -442,13 +447,31 @@ class SyncedTrashPlugin extends Plugin {
     await this.app.vault.createFolder(entryFolder);
     const metadata = { version: 1, id, originalPath, storedName, deletedAt: Date.now() };
     let moved = false;
+    let destinationPresent = false;
     try {
       await this.app.vault.adapter.write(metadataPath, JSON.stringify(metadata, null, 2));
       // Do not use FileManager.renameFile: it would rewrite links in other notes.
-      await this.app.vault.rename(file, entryFolder + '/' + storedName);
+      const destination = entryFolder + '/' + storedName;
+      try {
+        await this.app.vault.rename(file, destination);
+      } catch (error) {
+        // Some adapters can finish the physical move and then report an
+        // indexing/event error. Preserve recovery metadata whenever the
+        // payload reached its destination instead of creating an orphan.
+        destinationPresent = await this.app.vault.adapter.exists(destination);
+        const sourcePresent = await this.app.vault.adapter.exists(originalPath);
+        if (destinationPresent && !sourcePresent) {
+          moved = true;
+          console.warn('Synced Trash: move completed but Obsidian reported an error', error);
+          return metadata;
+        }
+        throw error;
+      }
+      destinationPresent = await this.app.vault.adapter.exists(destination);
+      if (!destinationPresent) throw new Error('Moved item could not be verified at its destination.');
       moved = true;
     } finally {
-      if (!moved) {
+      if (!moved && !destinationPresent) {
         // The original file stays at its original path if the move failed.
         try { if (await this.app.vault.adapter.exists(metadataPath)) await this.app.vault.adapter.remove(metadataPath); } catch (_) {}
         try { await this.app.vault.adapter.rmdir(entryFolder, false); } catch (_) {}

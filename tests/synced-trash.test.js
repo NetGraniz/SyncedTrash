@@ -189,6 +189,22 @@ test('standard file deletion gets intercepted and is recoverable', async () => {
   assert.notEqual(fileManager.trashFile, undefined);
 });
 
+test('a completed move remains recoverable when Obsidian reports a late error', async () => {
+  const { fs, plugin } = setup();
+  fs.addFolder('Notes');
+  const file = fs.addFile('Notes/Late error.md');
+  const realRename = fs.vault.rename.bind(fs.vault);
+  fs.vault.rename = async (...args) => {
+    await realRename(...args);
+    throw new Error('Simulated late index error');
+  };
+  await plugin.trashItem(file);
+  const [entry] = await plugin.listEntries();
+  assert.equal(entry.originalPath, 'Notes/Late error.md');
+  assert.equal(entry.available, true);
+  assert.equal(await fs.adapter.exists('Notes/Late error.md'), false);
+});
+
 test('restoration never overwrites an existing file', async () => {
   const { fs, plugin } = setup();
   fs.addFolder('Notes');

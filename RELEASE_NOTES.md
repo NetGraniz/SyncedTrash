@@ -1,15 +1,13 @@
-# Synced Trash 0.4.1
+# Synced Trash 0.4.2
 
-Shared, recoverable trash for Obsidian on Windows and iPhone.
+Reliability and release-quality update for the shared recoverable trash on Windows and iPhone.
 
 ## Changes
 
-- Committed a JavaScript lockfile so automated build verification can reproduce dependency resolution.
-- Added a GitHub Actions workflow that checks the tag, runs tests, attests the three installable files, and publishes release notes.
-- No changes to the deletion, restoration, or retention behavior from 0.4.0.
+- Preserved recovery metadata when Obsidian completes a physical move but reports a late indexing or event error.
+- Made parent-folder creation tolerant of safe races with a sync provider or another operation.
+- Added regression coverage for late move errors.
+- Added reproducible build input under `src/`, `versions.json`, CI, release asset verification, release notes, and GitHub artifact attestations.
+- Added a repository ignore rule so local plugin `data.json` files cannot be committed accidentally.
 
-## GitHub release instructions
-
-Commit this source and push tag **`0.4.1`** (NOT `v0.4.1`). GitHub Actions will run tests, create provenance attestations, and publish a Release containing **`main.js`**, **`manifest.json`**, and **`styles.css`** with these notes as its description. Do not manually create the Release first.
-
-Backup your vault and test first. Deleted files cannot be recovered after permanent removal.
+There are no data-format changes. Existing trash entries remain compatible. Back up the vault and verify deletion and restoration on a test note after updating.
