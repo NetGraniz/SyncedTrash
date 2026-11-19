@@ -2,7 +2,7 @@
 
 **A shared, recoverable trash for your Obsidian vault.** Made for desktop and mobile, including Windows and iPhone. Works with existing file-based sync services such as Remotely Save + Dropbox — no Dropbox integration or token is needed.
 
-**Version:** 0.4.2 (testing release). **Please back up your vault and verify the behavior on two test notes before relying on this plugin.**
+**Version:** 1.0.0 — the first stable release. It has been used for several weeks across multiple Windows PCs and iPhones in addition to automated deletion, restoration, migration, retention, and failure-recovery tests. Keep independent backups of important notes as you would with any synchronization system.
 
 ## How it works
 

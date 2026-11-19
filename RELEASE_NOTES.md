@@ -1,13 +1,23 @@
-# Synced Trash 0.4.2
+# Synced Trash 1.0.0
 
-Reliability and release-quality update for the shared recoverable trash on Windows and iPhone.
+The first stable release of the shared recoverable trash for Obsidian on Windows and iPhone.
 
-## Changes
+## Stable release
 
-- Preserved recovery metadata when Obsidian completes a physical move but reports a late indexing or event error.
-- Made parent-folder creation tolerant of safe races with a sync provider or another operation.
-- Added regression coverage for late move errors.
-- Added reproducible build input under `src/`, `versions.json`, CI, release asset verification, release notes, and GitHub artifact attestations.
-- Added a repository ignore rule so local plugin `data.json` files cannot be committed accidentally.
+- Validated through several weeks of daily use across multiple Windows PCs and iPhones.
+- Covered by automated deletion, restoration, folder, migration, retention, pending-sync, safety-boundary, and failure-recovery tests.
+- Declares the existing entry metadata v1 format stable. Future incompatible formats will use an explicit migration.
+- Removes the testing-release label without changing deletion, restoration, cleanup, or synchronization behavior.
 
-There are no data-format changes. Existing trash entries remain compatible. Back up the vault and verify deletion and restoration on a test note after updating.
+## Safety model
+
+- Deleted files are moved intact into uniquely named folders inside the visible `Trash/` directory.
+- Recovery metadata records the original path and deletion time without modifying note contents.
+- Restoration never intentionally overwrites an existing file and chooses a distinct restored name on conflict.
+- Pending entries are never removed automatically before their payload reaches the device.
+- Permanent deletion and emptying Trash require explicit confirmation.
+- Unsafe paths outside `Trash/` are rejected before recursive deletion.
+
+## Upgrade notes
+
+No migration or configuration changes are required when upgrading from 0.4.2. Existing trash entries remain fully compatible. Keep the visible `Trash/` folder included in your synchronization service and keep independent backups of important notes.

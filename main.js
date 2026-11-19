@@ -1,4 +1,4 @@
-/* Synced Trash 0.4.2 — plain JavaScript with no desktop-only APIs. */
+/* Synced Trash 1.0.0 — plain JavaScript with no desktop-only APIs. */
 const {
   ItemView,
   Modal,
